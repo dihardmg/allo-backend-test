@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: test
+
+frankfurter:
+  api:
+    base-url: https://api.frankfurter.app
+    timeout: 10000
+
+github:
+  username: testuser
+
+logging:
+  level:
+    com.home.test: DEBUG

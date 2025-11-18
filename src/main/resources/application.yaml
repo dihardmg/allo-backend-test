@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: test
+
+frankfurter:
+  api:
+    base-url: https://api.frankfurter.app
+    timeout: 5000
+
+github:
+  username: dihardmg

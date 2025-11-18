@@ -1,0 +1,166 @@
+### 📡 Allo Bank Backend Test API
+### REST Client Testing File
+### Author: Claude Code Assistant
+### Description: Comprehensive API testing for Allo Bank take-home test
+
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+### ==============================
+### 🔍 HEALTH CHECK ENDPOINTS
+### ==============================
+
+### ✅ Health Check - Application Status
+GET {{baseUrl}}/api/finance/data/health
+Accept: {{contentType}}
+
+
+### ==============================
+### 📊 CORE API ENDPOINTS
+### ==============================
+
+### 📈 Latest IDR Rates with Spread Calculation
+GET {{baseUrl}}/api/finance/data/latest_idr_rates
+Accept: {{contentType}}
+
+### 💰 Supported Currencies List
+GET {{baseUrl}}/api/finance/data/supported_currencies
+Accept: {{contentType}}
+
+
+### 💰 Supported Currencies List simple code (ISO 4217)
+GET {{baseUrl}}/api/finance/data/supported_currencies?format=simple
+Accept: {{contentType}}
+
+
+### 📅 Historical Rates with Custom Parameters eg IDR to USD
+GET http://localhost:8080/api/finance/data/historical/custom?start=2025-11-03&end=2025-11-30&from=IDR&to=USD
+Accept: {{contentType}}
+
+### 📅 Historical USD to IDR Rates
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-11-10&end=2025-11-30&from=USD&to=IDR
+Accept: {{contentType}}
+
+### 📅 Historical GBP to EUR Rates
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-01&end=2025-01-05&from=GBP&to=EUR
+Accept: {{contentType}}
+
+### 📅 Historical JPY to USD Rates (Recent)
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-11-01&end=2025-11-05&from=JPY&to=USD
+Accept: {{contentType}}
+
+### 📅 Historical IDR to EUR Rates
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-01&end=2025-01-05&from=IDR&to=EUR
+Accept: {{contentType}}
+
+### 📅 Historical SGD to MYR Rates
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-11-01&end=2025-11-17&from=SGD&to=IDR
+Accept: {{contentType}}
+
+### 📅 Historical Data - Single Day (Same Start and End Date)
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-11-17&end=2025-11-17&from=IDR&to=USD
+Accept: {{contentType}}
+
+### 📅 Historical Data - Longer Period (2 Weeks)
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-01&end=2025-01-15&from=USD&to=EUR
+Accept: {{contentType}}
+
+### 📅 Historical Data - Current Month
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-11-01&end=2025-11-17&from=EUR&to=IDR
+Accept: {{contentType}}
+
+
+### ==============================
+### ❌ ERROR HANDLING TESTS
+### ==============================
+
+### 🚫 Invalid Resource Type - Should return 400
+GET {{baseUrl}}/api/finance/data/invalid_resource_type
+Accept: {{contentType}}
+
+### 🚫 Empty Resource Type - Should return 400
+GET {{baseUrl}}/api/finance/data/
+Accept: {{contentType}}
+
+### 🚫 Non-existent Endpoint - Should return 404
+GET {{baseUrl}}/api/finance/data/nonexistent
+Accept: {{contentType}}
+
+### 🚫 Invalid HTTP Method - Should return 405
+POST {{baseUrl}}/api/finance/data/latest_idr_rates
+Content-Type: {{contentType}}
+
+### 🚫 Historical - Invalid Date Format - Should return 400
+GET {{baseUrl}}/api/finance/data/historical/custom?start=01-01-2025&end=05-01-2025&from=IDR&to=USD
+Accept: {{contentType}}
+
+### 🚫 Historical - Invalid Currency Code - Should return 400
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-01&end=2025-01-05&from=IDR&to=US
+Accept: {{contentType}}
+
+### 🚫 Historical - Missing Parameters - Should return 400
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-01
+Accept: {{contentType}}
+
+### 🚫 Historical - End Date Before Start Date - Should return error from API
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-05&end=2025-01-01&from=IDR&to=USD
+Accept: {{contentType}}
+
+### 🚫 Historical - Future Date Range - API Error from Frankfurter
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2025-01-01&end=2025-10-30&from=IDR&to=USD
+Accept: {{contentType}}
+
+### 🚫 Historical - Very Old Date Range - API Error from Frankfurter
+GET {{baseUrl}}/api/finance/data/historical/custom?start=1999-01-01&end=1999-01-05&from=IDR&to=USD
+Accept: {{contentType}}
+
+### 🚫 Historical - Too Long Date Range - API Error from Frankfurter
+GET {{baseUrl}}/api/finance/data/historical/custom?start=2020-01-01&end=2025-12-31&from=IDR&to=USD
+Accept: {{contentType}}
+
+
+
+### ==============================
+### 📝 NOTES & INSTRUCTIONS
+### ==============================
+
+### 📋 How to Use This File:
+# 1. Make sure the application is running on localhost:8080
+# 2. Use IDE with REST Client support (IntelliJ, VS Code with REST Client extension)
+# 3. Click "Run Request" next to each endpoint or use shortcuts
+# 4. Responses will appear in the REST Client tool window
+# 5. Use the "Run All" feature for bulk testing
+
+### 🔧 Configuration:
+# - @baseUrl: Change if application runs on different port/host
+# - @contentType: Modify if different content types needed
+# - Add authentication headers if required in future
+
+### 📊 Expected Response Times:
+# - Health check: < 50ms
+# - Latest rates: < 100ms (in-memory)
+# - Historical data: < 100ms (in-memory)
+# - Supported currencies: < 50ms (in-memory)
+
+### ✅ Success Criteria:
+# - All endpoints return 200 OK status
+# - Error endpoints return appropriate error codes
+# - Response times are within expected benchmarks
+# - Data structure matches expected format
+# - USD_BuySpread_IDR calculation is correct
+
+### 🚨 Troubleshooting:
+# - Connection refused: Start the application first
+# - Timeout errors: Check if application is fully initialized
+# - 404 errors: Verify endpoint paths and application routing
+# - Unexpected response formats: Check application logs
+
+### 📚 Additional Testing:
+# - Use tools like Postman for advanced testing
+# - Use Apache Bench (ab) for load testing
+# - Use JMeter for stress testing
+# - Use curl for command-line testing
+
+### ==============================
+### 🎉 END OF TEST SUITE
+### ==============================

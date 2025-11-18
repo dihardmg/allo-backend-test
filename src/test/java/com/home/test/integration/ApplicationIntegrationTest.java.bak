@@ -1,0 +1,62 @@
+package com.home.test.integration;
+
+import com.home.test.config.FrankfurterApiProperties;
+import com.home.test.config.GithubProperties;
+import com.home.test.config.WebClientFactoryBean;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import static org.mockito.Mockito.when;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class ApplicationIntegrationTest {
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @MockBean
+    private GithubProperties githubProperties;
+
+    @Test
+    void testHealthEndpoint() {
+        webTestClient.get()
+                .uri("/api/finance/data/health")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.status").exists()
+                .jsonPath("$.initialized").exists();
+    }
+
+    @Test
+    void testInvalidResourceType() {
+        webTestClient.get()
+                .uri("/api/finance/data/invalid_type")
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody()
+                .jsonPath("$.error").isEqualTo("Invalid Resource Type")
+                .jsonPath("$.message").exists();
+    }
+
+    @Test
+    void testServiceInitializedSuccessfully() {
+        webTestClient.get()
+                .uri("/api/finance/data/latest_idr_rates")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.base").isEqualTo("IDR")
+                .jsonPath("$.rates").exists()
+                .jsonPath("$.rates.USD").exists()
+                .jsonPath("$.USD_BuySpread_IDR").exists();
+    }
+}
